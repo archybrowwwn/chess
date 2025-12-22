@@ -1,14 +1,17 @@
 package chess.pieces;
 
 import boardgame.Board;
-import boardgame.Position;
+import boardgame.Node;
+import boardgame.Team;
+import boardgame.Direction;
 import chess.ChessPiece;
-import chess.Color;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Rook extends ChessPiece{
+public class Rook extends ChessPiece {
 
-    public Rook(Board board, Color color) {
-        super(board, color);
+    public Rook(Board board, Team team) {
+        super(board, team);
     }
 
     @Override
@@ -17,14 +20,14 @@ public class Rook extends ChessPiece{
     }
 
     @Override
-    public boolean[][] possibleMoves() {
-        boolean[][] mat = new boolean[getBoard().getRows()][getBoard().getColumns()];
+    public List<Node> possibleMoves() {
+        List<Node> moves = new ArrayList<>();
 
-        addMovesInDirection(mat, -1, 0); // Up
-        addMovesInDirection(mat, 1, 0);  // Down
-        addMovesInDirection(mat, 0, -1); // Left
-        addMovesInDirection(mat, 0, 1);  // Right
+        addMovesInDirection(moves, Direction.NORTH);
+        addMovesInDirection(moves, Direction.SOUTH);
+        addMovesInDirection(moves, Direction.EAST);
+        addMovesInDirection(moves, Direction.WEST);
 
-        return mat;
+        return moves;
     }
 }

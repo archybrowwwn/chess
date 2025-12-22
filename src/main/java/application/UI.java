@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.ChessPosition;
-import chess.Color;
+import chess.ChessTeam;
 
 public class UI {
 
@@ -32,9 +32,7 @@ public class UI {
             return new ChessPosition(column, row);
         }
         catch (RuntimeException e) {
-            throw new InputMismatchException(
-                    "Ошибка ввода позиции. Допустимые значения — от a1 до h8."
-            );
+            throw new InputMismatchException("Ошибка ввода позиции. Допустимые значения — от a1 до h8.");
         }
     }
 
@@ -83,7 +81,7 @@ public class UI {
         if (piece == null) {
             System.out.print("-" + ANSI_RESET);
         } else {
-            String colorCode = (piece.getColor() == Color.WHITE)
+            String colorCode = (piece.getTeam() == ChessTeam.WHITE)
                     ? ANSI_WHITE
                     : ANSI_YELLOW;
             System.out.print(colorCode + piece + ANSI_RESET);
@@ -93,11 +91,11 @@ public class UI {
 
     private static void printCapturedPieces(List<ChessPiece> captured) {
         List<ChessPiece> white = captured.stream()
-                .filter(x -> x.getColor() == Color.WHITE)
+                .filter(x -> x.getTeam() == ChessTeam.WHITE)
                 .collect(Collectors.toList());
 
         List<ChessPiece> black = captured.stream()
-                .filter(x -> x.getColor() == Color.BLACK)
+                .filter(x -> x.getTeam() == ChessTeam.BLACK)
                 .collect(Collectors.toList());
 
         System.out.println("Сбитые фигуры:");

@@ -1,62 +1,55 @@
 package chess.pieces;
 
 import boardgame.Board;
-import boardgame.Position;
+import boardgame.Node;
+import boardgame.Team;
+import boardgame.Direction;
 import chess.ChessMatch;
 import chess.ChessPiece;
-import chess.Color;
+import chess.ChessTeam;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Pawn extends ChessPiece {
 
     private ChessMatch chessMatch;
 
-    public Pawn(Board board, Color color, ChessMatch chessMatch) {
-        super(board, color);
+    public Pawn(Board board, Team team, ChessMatch chessMatch) {
+        super(board, team);
         this.chessMatch = chessMatch;
     }
 
     @Override
-    public boolean[][] possibleMoves() {
-        boolean[][] mat = new boolean[getBoard().getRows()][getBoard().getColumns()];
-        Position p = new Position(0, 0);
+    public List<Node> possibleMoves() {
+        List<Node> moves = new ArrayList<>();
 
-        int direction = (getColor() == Color.WHITE) ? -1 : 1;
+        Direction forward = (getTeam() == ChessTeam.WHITE) ? Direction.NORTH : Direction.SOUTH;
 
-        p.setValues(position.getRow() + direction, position.getColumn());
-        if (getBoard().positionExists(p) && !getBoard().thereIsAPiece(p)) {
-            mat[p.getRow()][p.getColumn()] = true;
+        Node p1 = node.getNeighbor(forward);
+        if (p1 != null && p1.isEmpty()) {
+            moves.add(p1);
 
-            Position p2 = new Position(position.getRow() + (direction * 2), position.getColumn());
-            if (getBoard().positionExists(p2) && !getBoard().thereIsAPiece(p2) && getMoveCount() == 0) {
-                mat[p2.getRow()][p2.getColumn()] = true;
+            if (getMoveCount() == 0) {
+                Node p2 = p1.getNeighbor(forward);
+                if (p2 != null && p2.isEmpty()) {
+                    moves.add(p2);
+                }
             }
         }
 
-        p.setValues(position.getRow() + direction, position.getColumn() - 1);
-        if (getBoard().positionExists(p) && isThereOpponentPiece(p)) {
-            mat[p.getRow()][p.getColumn()] = true;
-        }
+        Direction leftDiag = (getTeam() == ChessTeam.WHITE) ? Direction.NORTH_WEST : Direction.SOUTH_WEST;
+        Direction rightDiag = (getTeam() == ChessTeam.WHITE) ? Direction.NORTH_EAST : Direction.SOUTH_EAST;
 
-        p.setValues(position.getRow() + direction, position.getColumn() + 1);
-        if (getBoard().positionExists(p) && isThereOpponentPiece(p)) {
-            mat[p.getRow()][p.getColumn()] = true;
-        }
+        checkCapture(moves, leftDiag);
+        checkCapture(moves, rightDiag);
 
-        if ((getColor() == Color.WHITE && position.getRow() == 3) ||
-                (getColor() == Color.BLACK && position.getRow() == 4)) {
-
-            checkEnPassant(mat, direction, position.getColumn() - 1);
-            checkEnPassant(mat, direction, position.getColumn() + 1);
-        }
-
-        return mat;
+        return moves;
     }
 
-    private void checkEnPassant(boolean[][] mat, int direction, int targetColumn) {
-        Position target = new Position(position.getRow(), targetColumn);
-        if (getBoard().positionExists(target) && isThereOpponentPiece(target) &&
-                getBoard().piece(target) == chessMatch.getEnPassantVulnerable()) {
-            mat[target.getRow() + direction][target.getColumn()] = true;
+    private void checkCapture(List<Node> moves, Direction dir) {
+        Node target = node.getNeighbor(dir);
+        if (target != null && isThereOpponentPiece(target)) {
+            moves.add(target);
         }
     }
 
@@ -64,5 +57,4 @@ public class Pawn extends ChessPiece {
     public String toString() {
         return "P";
     }
-
 }

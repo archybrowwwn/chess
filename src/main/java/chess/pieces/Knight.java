@@ -1,14 +1,17 @@
 package chess.pieces;
 
 import boardgame.Board;
-import boardgame.Position;
+import boardgame.Node;
+import boardgame.Team;
+import boardgame.Direction;
 import chess.ChessPiece;
-import chess.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Knight extends ChessPiece {
 
-    public Knight(Board board, Color color) {
-        super(board, color);
+    public Knight(Board board, Team team) {
+        super(board, team);
     }
 
     @Override
@@ -16,29 +19,37 @@ public class Knight extends ChessPiece {
         return "N";
     }
 
-    private boolean canMove(Position position) {
-        ChessPiece p = (ChessPiece)getBoard().piece(position);
-        return p == null || p.getColor() != getColor();
+    @Override
+    public List<Node> possibleMoves() {
+        List<Node> moves = new ArrayList<>();
+
+        checkJump(moves, Direction.NORTH, Direction.NORTH, Direction.WEST);
+        checkJump(moves, Direction.NORTH, Direction.NORTH, Direction.EAST);
+
+        checkJump(moves, Direction.SOUTH, Direction.SOUTH, Direction.WEST);
+        checkJump(moves, Direction.SOUTH, Direction.SOUTH, Direction.EAST);
+
+        checkJump(moves, Direction.WEST, Direction.WEST, Direction.NORTH);
+        checkJump(moves, Direction.WEST, Direction.WEST, Direction.SOUTH);
+
+        checkJump(moves, Direction.EAST, Direction.EAST, Direction.NORTH);
+        checkJump(moves, Direction.EAST, Direction.EAST, Direction.SOUTH);
+
+        return moves;
     }
 
-    @Override
-    public boolean[][] possibleMoves() {
-        boolean[][] mat = new boolean[getBoard().getRows()][getBoard().getColumns()];
-        Position p = new Position(0, 0);
+    private void checkJump(List<Node> moves, Direction d1, Direction d2, Direction d3) {
 
-        int[][] moves = {
-            {-1, -2}, {-2, -1}, {-2, 1}, {-1, 2},
-            {1, 2}, {2, 1}, {2, -1}, {1, -2}
-        };
+        Node target = node.getNeighbor(d1);
+        if (target == null) return;
 
-        for (int[] move: moves) {
-            p.setValues(position.getRow() + move[0], position.getColumn() + move[1]);
+        target = target.getNeighbor(d2);
+        if (target == null) return;
 
-            if (getBoard().positionExists(p) && canMove(p)) {
-                mat[p.getRow()][p.getColumn()] = true;
-            }
+        target = target.getNeighbor(d3);
+
+        if (target != null && (target.isEmpty() || isThereOpponentPiece(target))) {
+            moves.add(target);
         }
-
-        return mat;
     }
 }

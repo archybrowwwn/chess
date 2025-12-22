@@ -1,14 +1,17 @@
 package chess.pieces;
 
 import boardgame.Board;
-import boardgame.Position;
+import boardgame.Node;
+import boardgame.Team;
+import boardgame.Direction;
 import chess.ChessPiece;
-import chess.Color;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Bishop extends ChessPiece{
+public class Bishop extends ChessPiece {
 
-    public Bishop(Board board, Color color) {
-        super(board, color);
+    public Bishop(Board board, Team team) {
+        super(board, team);
     }
 
     @Override
@@ -17,14 +20,14 @@ public class Bishop extends ChessPiece{
     }
 
     @Override
-    public boolean[][] possibleMoves() {
-        boolean[][] mat = new boolean[getBoard().getRows()][getBoard().getColumns()];
+    public List<Node> possibleMoves() {
+        List<Node> moves = new ArrayList<>();
 
-        addMovesInDirection(mat, -1, -1); // NW
-        addMovesInDirection(mat, -1, 1);  // NE
-        addMovesInDirection(mat, 1, -1);  // SW
-        addMovesInDirection(mat, 1, 1);   // SE
+        addMovesInDirection(moves, Direction.NORTH_WEST);
+        addMovesInDirection(moves, Direction.NORTH_EAST);
+        addMovesInDirection(moves, Direction.SOUTH_WEST);
+        addMovesInDirection(moves, Direction.SOUTH_EAST);
 
-        return mat;
+        return moves;
     }
 }

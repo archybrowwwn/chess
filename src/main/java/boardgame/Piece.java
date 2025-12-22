@@ -1,42 +1,47 @@
 package boardgame;
 
+import java.util.List;
+
 public abstract class Piece {
 
-    protected Position position;
+    protected Node node;
     protected Board board;
+    protected Team team;
 
-    public Piece(Board board) {
+    public Piece(Board board, Team team) {
         this.board = board;
-        this.position = null;
+        this.team = team;
+        this.node = null;
     }
 
-    public Position getPosition() {
-        return position;
-    }
-
-    public void setPosition(Position position) {
-        this.position = position;
-    }
-
-    protected Board getBoard() {
+    public Board getBoard() {
         return board;
     }
 
-    public abstract boolean[][] possibleMoves();
+    public Team getTeam() {
+        return team;
+    }
 
-    public boolean possibleMove(Position position) {
-        return possibleMoves()[position.getRow()][position.getColumn()];
+    public Node getNode() {
+        return node;
+    }
+
+    public void setNode(Node node) {
+        this.node = node;
+    }
+
+    public abstract List<Node> possibleMoves();
+
+    public boolean possibleMove(Node targetNode) {
+        if (targetNode == null) return false;
+        return possibleMoves().contains(targetNode);
     }
 
     public boolean isThereAnyPossibleMove() {
-        boolean[][] matrix = possibleMoves();
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix.length; j++) {
-                if (matrix[i][j]) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return !possibleMoves().isEmpty();
+    }
+
+    protected boolean isThereOpponentPiece(Node target) {
+        return !target.isEmpty() && getTeam().isOpponent(target.getPiece().getTeam());
     }
 }
