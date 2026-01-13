@@ -4,18 +4,14 @@ import boardgame.Board;
 import boardgame.Node;
 import boardgame.Team;
 import boardgame.Direction;
-import chess.ChessMatch;
 import chess.ChessPiece;
 import java.util.ArrayList;
 import java.util.List;
 
 public class King extends ChessPiece {
 
-    private ChessMatch chessMatch;
-
-    public King(Board board, Team team, ChessMatch chessMatch) {
+    public King(Board board, Team team) {
         super(board, team);
-        this.chessMatch = chessMatch;
     }
 
     @Override

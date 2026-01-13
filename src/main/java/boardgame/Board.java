@@ -31,7 +31,6 @@ public class Board {
             for (int c = 0; c < columns; c++) {
                 Node node = getNode(r, c);
 
-                // Связываем с соседями, если они существуют
                 linkIfExists(node, Direction.NORTH, r - 1, c);
                 linkIfExists(node, Direction.SOUTH, r + 1, c);
                 linkIfExists(node, Direction.WEST, r, c - 1);

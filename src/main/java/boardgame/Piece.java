@@ -14,21 +14,11 @@ public abstract class Piece {
         this.node = null;
     }
 
-    public Board getBoard() {
-        return board;
-    }
+    public Board getBoard() { return board; }
+    public Team getTeam() { return team; }
 
-    public Team getTeam() {
-        return team;
-    }
-
-    public Node getNode() {
-        return node;
-    }
-
-    public void setNode(Node node) {
-        this.node = node;
-    }
+    public Node getNode() { return node; }
+    public void setNode(Node node) { this.node = node; }
 
     public abstract List<Node> possibleMoves();
 
@@ -37,7 +27,7 @@ public abstract class Piece {
         return possibleMoves().contains(targetNode);
     }
 
-    public boolean isThereAnyPossibleMove() {
+    public boolean hasAnyMove() {
         return !possibleMoves().isEmpty();
     }
 

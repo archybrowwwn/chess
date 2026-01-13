@@ -4,7 +4,6 @@ import boardgame.Board;
 import boardgame.Node;
 import boardgame.Team;
 import boardgame.Direction;
-import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.ChessTeam;
 import java.util.ArrayList;
@@ -12,11 +11,8 @@ import java.util.List;
 
 public class Pawn extends ChessPiece {
 
-    private ChessMatch chessMatch;
-
-    public Pawn(Board board, Team team, ChessMatch chessMatch) {
+    public Pawn(Board board, Team team) {
         super(board, team);
-        this.chessMatch = chessMatch;
     }
 
     @Override

@@ -1,68 +1,75 @@
 package application;
 
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-import chess.ChessException;
+import chess.ChessBot;
 import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.ChessPosition;
+import chess.ChessTeam;
 
 public class Program {
 
     public static void main(String[] args) {
-
         Scanner sc = new Scanner(System.in);
-        ChessMatch chessMatch = new ChessMatch();
+        ChessMatch match = new ChessMatch();
         List<ChessPiece> captured = new ArrayList<>();
 
-        while (!chessMatch.getCheckMate()) {
+        while (!match.isCheckMate()) {
             try {
                 UI.clearScreen();
-                UI.printMatch(chessMatch, captured);
+                UI.printMatch(match, captured);
                 System.out.println();
 
-                System.out.print("Исходная позиция: ");
-                ChessPosition source = UI.readChessPosition(sc);
+                ChessPiece capturedPiece;
 
-                boolean[][] possibleMoves = chessMatch.possibleMoves(source);
-                UI.clearScreen();
-                UI.printBoard(chessMatch.getPieces(), possibleMoves);
-
-                System.out.println();
-                System.out.print("Целевая позиция: ");
-                ChessPosition target = UI.readChessPosition(sc);
-
-                ChessPiece capturedPiece = chessMatch.performChessMove(source, target);
+                if (match.getCurrentPlayer() == ChessTeam.BLACK) {
+                    capturedPiece = playBotTurn(match, sc);
+                } else {
+                    capturedPiece = playHumanTurn(match, sc);
+                }
 
                 if (capturedPiece != null) {
                     captured.add(capturedPiece);
                 }
 
-                if (chessMatch.getPromoted() != null) {
-                    System.out.print("Выберите фигуру для превращения (B/N/R/Q): ");
-                    String type = sc.nextLine().toUpperCase();
-                    while (!type.equals("B") && !type.equals("N")
-                            && !type.equals("R") && !type.equals("Q")) {
-                        System.out.print("Некорректное значение! Выберите (B/N/R/Q): ");
-                        type = sc.nextLine().toUpperCase();
-                    }
-                    chessMatch.replacePromotedPiece(type);
-                }
-            }
-            catch (ChessException e) {
-                System.out.println(e.getMessage());
-                sc.nextLine();
-            }
-            catch (InputMismatchException e) {
-                System.out.println("Ошибка ввода. Попробуйте снова.");
+            } catch (Exception e) {
+                System.out.println("Ошибка: " + e.getMessage());
                 sc.nextLine();
             }
         }
 
         UI.clearScreen();
-        UI.printMatch(chessMatch, captured);
+        UI.printMatch(match, captured);
+    }
+
+    private static ChessPiece playHumanTurn(ChessMatch match, Scanner sc) {
+        System.out.print("Откуда: ");
+        ChessPosition source = UI.readChessPosition(sc);
+
+        boolean[][] possibleMoves = match.possibleMoves(source);
+        UI.clearScreen();
+        UI.printBoard(match.getPieces(), possibleMoves);
+        System.out.println();
+
+        System.out.print("Куда: ");
+        ChessPosition target = UI.readChessPosition(sc);
+
+        return match.performChessMove(source, target);
+    }
+
+    private static ChessPiece playBotTurn(ChessMatch match, Scanner sc) {
+        System.out.println("Бот думает...");
+
+        try { Thread.sleep(600); } catch (InterruptedException e) {}
+
+        ChessPiece captured = ChessBot.makeRandomMove(match);
+
+        System.out.println("Бот сделал ход. Нажмите Enter, чтобы продолжить...");
+        sc.nextLine();
+
+        return captured;
     }
 }
