@@ -5,34 +5,42 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-import chess.ChessBot;
+import boardgame.Piece;
 import chess.ChessException;
 import chess.ChessMatch;
-import chess.ChessPiece;
-import chess.ChessPosition;
 import chess.ChessTeam;
 
 public class Program {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-
-
-
         ChessMatch match = new ChessMatch();
-        List<ChessPiece> captured = new ArrayList<>();
+        List<Piece> captured = new ArrayList<>();
 
-        System.out.println("1 - Игрок против Игрока");
-        System.out.println("2 - Игрок против Бота");
-        System.out.print("Выберите режим: ");
+        System.out.println("1 - Человек vs Человек");
+        System.out.println("2 - Человек vs Бот");
+        System.out.println("3 - Бот vs Бот");
+        System.out.print("Режим: ");
 
-        int mode = 1;
-        try {
-            mode = sc.nextInt();
-        } catch (Exception e) {
-            mode = 1;
-        }
+        int mode = sc.hasNextInt() ? sc.nextInt() : 1;
         sc.nextLine();
+
+        ChessPlayer player1;
+        ChessPlayer player2;
+
+        switch (mode) {
+            case 2:
+                player1 = new HumanPlayer();
+                player2 = new BotPlayer();
+                break;
+            case 3:
+                player1 = new BotPlayer();
+                player2 = new BotPlayer();
+                break;
+            default:
+                player1 = new HumanPlayer();
+                player2 = new HumanPlayer();
+        }
 
         while (!match.isCheckMate()) {
             try {
@@ -40,56 +48,31 @@ public class Program {
                 UI.printMatch(match, captured);
                 System.out.println();
 
-                ChessPiece capturedPiece;
+                Piece capturedPiece;
 
-                if (match.getCurrentPlayer() == ChessTeam.BLACK && mode == 2) {
-                    capturedPiece = playBotTurn(match, sc);
+                if (match.getCurrentPlayer() == ChessTeam.WHITE) {
+                    capturedPiece = player1.playTurn(match, sc);
                 } else {
-                    capturedPiece = playHumanTurn(match, sc);
+                    capturedPiece = player2.playTurn(match, sc);
                 }
 
                 if (capturedPiece != null) {
                     captured.add(capturedPiece);
                 }
 
+                if (mode == 3) {
+                    try { Thread.sleep(1000); } catch (InterruptedException e) {}
+                }
+
             } catch (ChessException e) {
-                System.out.println("Ошибка игры: " + e.getMessage());
+                System.out.println(e.getMessage());
                 sc.nextLine();
             } catch (InputMismatchException e) {
-                System.out.println("Ошибка ввода. Нажмите Enter.");
+                System.out.println("Ошибка ввода");
                 sc.nextLine();
             }
         }
-
         UI.clearScreen();
         UI.printMatch(match, captured);
-    }
-
-    private static ChessPiece playHumanTurn(ChessMatch match, Scanner sc) {
-        System.out.print("Откуда: ");
-        ChessPosition source = UI.readChessPosition(sc);
-
-        boolean[][] possibleMoves = match.possibleMoves(source);
-        UI.clearScreen();
-        UI.printBoard(match.getPieces(), possibleMoves);
-        System.out.println();
-
-        System.out.print("Куда: ");
-        ChessPosition target = UI.readChessPosition(sc);
-
-        return match.performChessMove(source, target);
-    }
-
-    private static ChessPiece playBotTurn(ChessMatch match, Scanner sc) {
-        System.out.println("Бот думает...");
-
-        try { Thread.sleep(1000); } catch (InterruptedException e) {}
-
-        ChessPiece result = ChessBot.makeRandomMove(match);
-
-        System.out.println("Нажмите Enter...");
-        sc.nextLine();
-
-        return result;
     }
 }

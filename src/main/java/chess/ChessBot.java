@@ -1,6 +1,8 @@
 package chess;
 
 import boardgame.Node;
+import boardgame.Piece;
+import boardgame.Team;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,14 +10,16 @@ import java.util.Random;
 
 public class ChessBot {
 
-    public static ChessPiece makeRandomMove(ChessMatch match) {
-        ChessPiece[][] board = match.getPieces();
-        List<ChessPiece> myPieces = new ArrayList<>();
-        ChessTeam botTeam = (ChessTeam) match.getCurrentPlayer();
+    public static Piece makeRandomMove(ChessMatch match) {
+
+        Piece[][] board = match.getPieces();
+        List<Piece> myPieces = new ArrayList<>();
+        Team botTeam = match.getCurrentPlayer();
 
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
-                ChessPiece p = board[i][j];
+                Piece p = board[i][j];
+
                 if (p != null && p.getTeam() == botTeam && !p.possibleMoves().isEmpty()) {
                     myPieces.add(p);
                 }
@@ -27,17 +31,18 @@ public class ChessBot {
         }
 
         Random rand = new Random();
-        ChessPiece selectedPiece = myPieces.get(rand.nextInt(myPieces.size()));
+        Piece selectedPiece = myPieces.get(rand.nextInt(myPieces.size()));
 
         List<Node> moves = selectedPiece.possibleMoves();
         Node targetNode = moves.get(rand.nextInt(moves.size()));
 
-        ChessPosition source = selectedPiece.getChessPosition();
+        int sourceRow = selectedPiece.getNode().getRow();
+        int sourceCol = selectedPiece.getNode().getColumn();
+        ChessPosition source = new ChessPosition((char)('a' + sourceCol), 8 - sourceRow);
 
-        String[] parts = targetNode.getId().split(",");
-        int r = Integer.parseInt(parts[0]);
-        int c = Integer.parseInt(parts[1]);
-        ChessPosition target = new ChessPosition((char)('a' + c), 8 - r);
+        int targetRow = targetNode.getRow();
+        int targetCol = targetNode.getColumn();
+        ChessPosition target = new ChessPosition((char)('a' + targetCol), 8 - targetRow);
 
         System.out.println("Бот сходил: " + source + " -> " + target);
 

@@ -4,11 +4,11 @@ import boardgame.Board;
 import boardgame.Node;
 import boardgame.Team;
 import boardgame.Direction;
-import chess.ChessPiece;
+import boardgame.Piece;
 import java.util.ArrayList;
 import java.util.List;
 
-public class King extends ChessPiece {
+public class King extends Piece {
 
     public King(Board board, Team team) {
         super(board, team);

@@ -7,13 +7,9 @@ public class Board {
 
     private int rows;
     private int columns;
-
-    private Map<String, Node> nodes = new HashMap<>();
+    private Map<NodeId, Node> nodes = new HashMap<>();
 
     public Board(int rows, int columns) {
-        if (rows < 1 || columns < 1) {
-            throw new BoardException("Ошибка создания доски");
-        }
         this.rows = rows;
         this.columns = columns;
         initializeGraph();
@@ -22,15 +18,14 @@ public class Board {
     private void initializeGraph() {
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < columns; c++) {
-                String id = makeId(r, c);
-                nodes.put(id, new Node(id));
+                Node node = new Node(r, c);
+                nodes.put(node.getId(), node);
             }
         }
 
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < columns; c++) {
                 Node node = getNode(r, c);
-
                 for (Direction dir : Direction.values()) {
                     int neighborRow = r + dir.getRowOffset();
                     int neighborCol = c + dir.getColumnOffset();
@@ -44,58 +39,36 @@ public class Board {
         }
     }
 
-    private String makeId(int row, int column) {
-        return row + "," + column;
-    }
-
     public Node getNode(int row, int column) {
-        return nodes.get(makeId(row, column));
+        return nodes.get(new NodeId(row, column));
     }
 
-    public Node getNode(String id) {
-        return nodes.get(id);
-    }
-
-    public void placePiece(Piece piece, String nodeId) {
+    public void placePiece(Piece piece, NodeId nodeId) {
         Node node = nodes.get(nodeId);
-        if (node == null) {
-            throw new BoardException("Узел не найден: " + nodeId);
+        if (node != null) {
+            node.setPiece(piece);
+            piece.setNode(node);
         }
-        if (!node.isEmpty()) {
-            throw new BoardException("Позиция занята: " + nodeId);
-        }
-        node.setPiece(piece);
-        piece.setNode(node);
     }
 
-    public Piece removePiece(String nodeId) {
+    public void placePiece(Piece piece, int row, int col) {
+        placePiece(piece, new NodeId(row, col));
+    }
+
+    public Piece removePiece(NodeId nodeId) {
         Node node = nodes.get(nodeId);
-        if (node == null || node.isEmpty()) {
+        if (node == null || node.getPiece() == null) {
             return null;
         }
-        Piece p = node.getPiece();
+        Piece piece = node.getPiece();
         node.setPiece(null);
-        p.setNode(null);
-        return p;
+        return piece;
     }
 
     public boolean positionExists(int row, int column) {
         return row >= 0 && row < rows && column >= 0 && column < columns;
     }
 
-    public boolean thereIsAPiece(String nodeId) {
-        Node node = nodes.get(nodeId);
-        if (node == null) {
-            throw new BoardException("Позиция не существует");
-        }
-        return !node.isEmpty();
-    }
-
-    public int getRows() {
-        return rows;
-    }
-
-    public int getColumns() {
-        return columns;
-    }
+    public int getRows() { return rows; }
+    public int getColumns() { return columns; }
 }

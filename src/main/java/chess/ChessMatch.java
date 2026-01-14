@@ -50,13 +50,13 @@ public class ChessMatch {
         return checkMate;
     }
 
-    public ChessPiece[][] getPieces() {
-        ChessPiece[][] mat = new ChessPiece[board.getRows()][board.getColumns()];
+    public Piece[][] getPieces() {
+        Piece[][] mat = new Piece[board.getRows()][board.getColumns()];
         for (int i = 0; i < board.getRows(); i++) {
             for (int j = 0; j < board.getColumns(); j++) {
                 Node node = board.getNode(i, j);
                 if (!node.isEmpty()) {
-                    mat[i][j] = (ChessPiece) node.getPiece();
+                    mat[i][j] = node.getPiece(); // УБРАЛИ (ChessPiece)
                 }
             }
         }
@@ -72,15 +72,12 @@ public class ChessMatch {
 
         boolean[][] mat = new boolean[board.getRows()][board.getColumns()];
         for (Node n : possibleNodes) {
-            String[] parts = n.getId().split(",");
-            int r = Integer.parseInt(parts[0]);
-            int c = Integer.parseInt(parts[1]);
-            mat[r][c] = true;
+            mat[n.getRow()][n.getColumn()] = true;
         }
         return mat;
     }
 
-    public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
+    public Piece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
         Position sourcePos = sourcePosition.toPosition();
         Position targetPos = targetPosition.toPosition();
 
@@ -105,12 +102,13 @@ public class ChessMatch {
             nextTurn();
         }
 
-        return (ChessPiece) capturedPiece;
+        return capturedPiece;
     }
 
     private Piece executeMove(Node source, Node target) {
         Piece p = board.removePiece(source.getId());
-        ((ChessPiece) p).increaseMoveCount();
+        p.increaseMoveCount();
+
         Piece capturedPiece = board.removePiece(target.getId());
         board.placePiece(p, target.getId());
 
@@ -123,7 +121,8 @@ public class ChessMatch {
 
     private void undoMove(Node source, Node target, Piece capturedPiece) {
         Piece p = board.removePiece(target.getId());
-        ((ChessPiece) p).decreaseMoveCount();
+        p.decreaseMoveCount(); // И ЭТОТ ТОЖЕ
+
         board.placePiece(p, source.getId());
 
         if (capturedPiece != null) {
@@ -154,9 +153,9 @@ public class ChessMatch {
         return (team == ChessTeam.WHITE) ? ChessTeam.BLACK : ChessTeam.WHITE;
     }
 
-    private ChessPiece king(Team team) {
+    private Piece king(Team team) {
         for (Piece p : piecesOnTheBoard) {
-            if (p instanceof King && p.getTeam() == team) return (ChessPiece) p;
+            if (p instanceof King && p.getTeam() == team) return p;
         }
         throw new IllegalStateException("Нет короля " + team);
     }
@@ -215,9 +214,8 @@ public class ChessMatch {
         }
     }
 
-    private void placeNewPiece(char column, int row, ChessPiece piece) {
-        String nodeId = board.getNode(8 - row, column - 'a').getId();
-        board.placePiece(piece, nodeId);
+    private void placeNewPiece(char column, int row, Piece piece) {
+        board.placePiece(piece, 8 - row, column - 'a');
         piecesOnTheBoard.add(piece);
     }
 }

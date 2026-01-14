@@ -5,41 +5,44 @@ import java.util.Map;
 
 public class Node {
 
-    private String id;
+    private NodeId id;
     private Piece piece;
 
     private Map<Direction, Node> neighbors = new HashMap<>();
 
-    public Node(String id) {
-        this.id = id;
+    public Node(int row, int column) {
+        this.id = new NodeId(row, column);
     }
 
-    public String getId() {
+    public NodeId getId() {
         return id;
     }
 
-    public void setNeighbor(Direction direction, Node node) {
-        neighbors.put(direction, node);
+    public int getRow() {
+        return id.getRow();
     }
 
-    public Node getNeighbor(Direction direction) {
-        return neighbors.get(direction);
-    }
-
-    public void setPiece(Piece piece) {
-        this.piece = piece;
+    public int getColumn() {
+        return id.getColumn();
     }
 
     public Piece getPiece() {
         return piece;
     }
 
-    public boolean isEmpty() {
-        return piece == null;
+    public void setPiece(Piece piece) {
+        this.piece = piece;
     }
 
-    @Override
-    public String toString() {
-        return id;
+    public Node getNeighbor(Direction direction) {
+        return neighbors.get(direction);
+    }
+
+    public void setNeighbor(Direction direction, Node node) {
+        neighbors.put(direction, node);
+    }
+
+    public boolean isEmpty() {
+        return piece == null;
     }
 }

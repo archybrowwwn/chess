@@ -4,44 +4,71 @@ import java.util.List;
 
 public abstract class Piece {
 
-    protected Node node;
+    protected Position position;
+    private Team team;
     protected Board board;
-    protected Team team;
+    protected Node node;
+
+    private int moveCount;
 
     public Piece(Board board, Team team) {
         this.board = board;
         this.team = team;
-        this.node = null;
     }
 
-    public Board getBoard() {
-        return board;
-    }
+    public abstract List<Node> possibleMoves();
 
     public Team getTeam() {
         return team;
-    }
-
-    public Node getNode() {
-        return node;
     }
 
     public void setNode(Node node) {
         this.node = node;
     }
 
-    public abstract List<Node> possibleMoves();
+    public Node getNode() {
+        return node;
+    }
 
-    public boolean possibleMove(Node targetNode) {
-        if (targetNode == null) return false;
-        return possibleMoves().contains(targetNode);
+    public boolean possibleMove(Node target) {
+        return possibleMoves().contains(target);
     }
 
     public boolean hasAnyMove() {
         return !possibleMoves().isEmpty();
     }
 
+    public int getMoveCount() {
+        return moveCount;
+    }
+
+    public void increaseMoveCount() {
+        moveCount++;
+    }
+
+    public void decreaseMoveCount() {
+        moveCount--;
+    }
+
     protected boolean isThereOpponentPiece(Node target) {
         return !target.isEmpty() && getTeam().isOpponent(target.getPiece().getTeam());
+    }
+
+    protected void addMovesInDirection(List<Node> moves, Direction direction) {
+        if (node == null) return;
+
+        Node target = node.getNeighbor(direction);
+
+        while (target != null) {
+            if (target.isEmpty()) {
+                moves.add(target);
+            } else {
+                if (isThereOpponentPiece(target)) {
+                    moves.add(target);
+                }
+                break;
+            }
+            target = target.getNeighbor(direction);
+        }
     }
 }

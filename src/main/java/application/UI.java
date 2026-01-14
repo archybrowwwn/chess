@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import boardgame.Piece;
 import chess.ChessMatch;
-import chess.ChessPiece;
 import chess.ChessPosition;
 import chess.ChessTeam;
 
@@ -41,7 +41,7 @@ public class UI {
         }
     }
 
-    public static void printMatch(ChessMatch chessMatch, List<ChessPiece> captured) {
+    public static void printMatch(ChessMatch chessMatch, List<Piece> captured) {
         printBoard(chessMatch.getPieces());
         System.out.println();
         printCapturedPieces(captured);
@@ -59,11 +59,11 @@ public class UI {
         }
     }
 
-    public static void printBoard(ChessPiece[][] pieces) {
+    public static void printBoard(Piece[][] pieces) {
         printBoard(pieces, null);
     }
 
-    public static void printBoard(ChessPiece[][] pieces, boolean[][] possibleMoves) {
+    public static void printBoard(Piece[][] pieces, boolean[][] possibleMoves) {
         System.out.println(ANSI_CYAN + "   _________________" + ANSI_RESET);
         for (int i = 0; i < pieces.length; i++) {
             System.out.print((8 - i) + ANSI_CYAN + " | " + ANSI_RESET);
@@ -76,7 +76,7 @@ public class UI {
         System.out.println("    a b c d e f g h");
     }
 
-    private static void printPiece(ChessPiece piece, boolean background) {
+    private static void printPiece(Piece piece, boolean background) {
         if (background) {
             System.out.print(ANSI_BLUE_BACKGROUND);
         }
@@ -89,10 +89,10 @@ public class UI {
         System.out.print(" ");
     }
 
-    private static void printCapturedPieces(List<ChessPiece> captured) {
+    private static void printCapturedPieces(List<Piece> captured) {
         System.out.println("Съеденные фигуры:");
         System.out.print("Белые съели: " + ANSI_YELLOW);
-        for (ChessPiece p : captured) {
+        for (Piece p : captured) {
             if (p.getTeam() == ChessTeam.BLACK) {
                 System.out.print(p + " ");
             }
@@ -100,7 +100,7 @@ public class UI {
         System.out.println(ANSI_RESET);
 
         System.out.print("Черные съели: " + ANSI_WHITE);
-        for (ChessPiece p : captured) {
+        for (Piece p : captured) {
             if (p.getTeam() == ChessTeam.WHITE) {
                 System.out.print(p + " ");
             }

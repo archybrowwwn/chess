@@ -4,12 +4,12 @@ import boardgame.Board;
 import boardgame.Node;
 import boardgame.Team;
 import boardgame.Direction;
-import chess.ChessPiece;
+import boardgame.Piece;
 import chess.ChessTeam;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Pawn extends ChessPiece {
+public class Pawn extends Piece {
 
     public Pawn(Board board, Team team) {
         super(board, team);
@@ -20,6 +20,9 @@ public class Pawn extends ChessPiece {
         List<Node> moves = new ArrayList<>();
 
         Direction forward = (getTeam() == ChessTeam.WHITE) ? Direction.NORTH : Direction.SOUTH;
+
+        Direction leftDiag = (getTeam() == ChessTeam.WHITE) ? Direction.NORTH_WEST : Direction.SOUTH_WEST;
+        Direction rightDiag = (getTeam() == ChessTeam.WHITE) ? Direction.NORTH_EAST : Direction.SOUTH_EAST;
 
         Node p1 = node.getNeighbor(forward);
         if (p1 != null && p1.isEmpty()) {
@@ -32,9 +35,6 @@ public class Pawn extends ChessPiece {
                 }
             }
         }
-
-        Direction leftDiag = (getTeam() == ChessTeam.WHITE) ? Direction.NORTH_WEST : Direction.SOUTH_WEST;
-        Direction rightDiag = (getTeam() == ChessTeam.WHITE) ? Direction.NORTH_EAST : Direction.SOUTH_EAST;
 
         checkCapture(moves, leftDiag);
         checkCapture(moves, rightDiag);
