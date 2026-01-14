@@ -1,10 +1,12 @@
 package application;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
 import chess.ChessBot;
+import chess.ChessException;
 import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.ChessPosition;
@@ -14,8 +16,23 @@ public class Program {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
+
+
+
         ChessMatch match = new ChessMatch();
         List<ChessPiece> captured = new ArrayList<>();
+
+        System.out.println("1 - Игрок против Игрока");
+        System.out.println("2 - Игрок против Бота");
+        System.out.print("Выберите режим: ");
+
+        int mode = 1;
+        try {
+            mode = sc.nextInt();
+        } catch (Exception e) {
+            mode = 1;
+        }
+        sc.nextLine();
 
         while (!match.isCheckMate()) {
             try {
@@ -25,7 +42,7 @@ public class Program {
 
                 ChessPiece capturedPiece;
 
-                if (match.getCurrentPlayer() == ChessTeam.BLACK) {
+                if (match.getCurrentPlayer() == ChessTeam.BLACK && mode == 2) {
                     capturedPiece = playBotTurn(match, sc);
                 } else {
                     capturedPiece = playHumanTurn(match, sc);
@@ -35,8 +52,11 @@ public class Program {
                     captured.add(capturedPiece);
                 }
 
-            } catch (Exception e) {
-                System.out.println("Ошибка: " + e.getMessage());
+            } catch (ChessException e) {
+                System.out.println("Ошибка игры: " + e.getMessage());
+                sc.nextLine();
+            } catch (InputMismatchException e) {
+                System.out.println("Ошибка ввода. Нажмите Enter.");
                 sc.nextLine();
             }
         }
@@ -63,13 +83,13 @@ public class Program {
     private static ChessPiece playBotTurn(ChessMatch match, Scanner sc) {
         System.out.println("Бот думает...");
 
-        try { Thread.sleep(600); } catch (InterruptedException e) {}
+        try { Thread.sleep(1000); } catch (InterruptedException e) {}
 
-        ChessPiece captured = ChessBot.makeRandomMove(match);
+        ChessPiece result = ChessBot.makeRandomMove(match);
 
-        System.out.println("Бот сделал ход. Нажмите Enter, чтобы продолжить...");
+        System.out.println("Нажмите Enter...");
         sc.nextLine();
 
-        return captured;
+        return result;
     }
 }

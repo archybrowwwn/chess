@@ -1,9 +1,10 @@
 package chess;
 
+import boardgame.Node;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import boardgame.Node;
 
 public class ChessBot {
 
@@ -15,14 +16,14 @@ public class ChessBot {
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
                 ChessPiece p = board[i][j];
-                if (p != null && p.getTeam() == botTeam && p.hasAnyMove()) {
+                if (p != null && p.getTeam() == botTeam && !p.possibleMoves().isEmpty()) {
                     myPieces.add(p);
                 }
             }
         }
 
         if (myPieces.isEmpty()) {
-            throw new ChessException("Боту нечем ходить");
+            throw new ChessException("Нет доступных ходов");
         }
 
         Random rand = new Random();
@@ -38,7 +39,7 @@ public class ChessBot {
         int c = Integer.parseInt(parts[1]);
         ChessPosition target = new ChessPosition((char)('a' + c), 8 - r);
 
-        System.out.println("Бот (" + botTeam + ") сходил: " + source + " -> " + target);
+        System.out.println("Бот сходил: " + source + " -> " + target);
 
         return match.performChessMove(source, target);
     }

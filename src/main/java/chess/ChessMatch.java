@@ -34,10 +34,21 @@ public class ChessMatch {
         setupBoard();
     }
 
-    public int getTurn() { return turn; }
-    public Team getCurrentPlayer() { return currentPlayer; }
-    public boolean isInCheck() { return check; }
-    public boolean isCheckMate() { return checkMate; }
+    public int getTurn() {
+        return turn;
+    }
+
+    public Team getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public boolean isInCheck() {
+        return check;
+    }
+
+    public boolean isCheckMate() {
+        return checkMate;
+    }
 
     public ChessPiece[][] getPieces() {
         ChessPiece[][] mat = new ChessPiece[board.getRows()][board.getColumns()];
@@ -79,16 +90,13 @@ public class ChessMatch {
         validateSource(sourcePos);
         validateTarget(sourceNode, targetNode);
 
-        // Выполняем ход
         Piece capturedPiece = executeMove(sourceNode, targetNode);
 
-        // Проверяем, не подставили ли мы сами себя под шах
         if (testCheck(currentPlayer)) {
             undoMove(sourceNode, targetNode, capturedPiece);
             throw new ChessException("Нельзя ставить короля под шах");
         }
 
-        // Проверяем, поставили ли мы шах сопернику
         check = testCheck(opponent(currentPlayer));
 
         if (testCheckMate(opponent(currentPlayer))) {

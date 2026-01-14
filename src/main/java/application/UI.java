@@ -20,18 +20,24 @@ public class UI {
     public static final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
 
     public static void clearScreen() {
-        System.out.println("\033[H\033[2J");
-        System.out.flush();
+        for (int i = 0; i < 50; i++) {
+            System.out.println();
+        }
     }
 
     public static ChessPosition readChessPosition(Scanner sc) {
-        try {
-            String s = sc.nextLine().toLowerCase().trim();
-            char column = s.charAt(0);
-            int row = Integer.parseInt(s.substring(1));
-            return new ChessPosition(column, row);
-        } catch (RuntimeException e) {
-            throw new InputMismatchException("Ошибка ввода (пример: a1).");
+        while (true) {
+            try {
+                String s = sc.nextLine().toLowerCase().trim();
+                if (s.length() != 2) {
+                    throw new InputMismatchException();
+                }
+                char column = s.charAt(0);
+                int row = Integer.parseInt(s.substring(1));
+                return new ChessPosition(column, row);
+            } catch (RuntimeException e) {
+                System.out.print("Ошибка ввода. Введите значения от a1 до h8: ");
+            }
         }
     }
 
@@ -43,7 +49,7 @@ public class UI {
         System.out.println("Ход: " + chessMatch.getTurn());
 
         if (!chessMatch.isCheckMate()) {
-            System.out.println("Ходит: " + chessMatch.getCurrentPlayer());
+            System.out.println("Ожидание хода: " + chessMatch.getCurrentPlayer());
             if (chessMatch.isInCheck()) {
                 System.out.println("!!! ШАХ !!!");
             }
@@ -84,18 +90,18 @@ public class UI {
     }
 
     private static void printCapturedPieces(List<ChessPiece> captured) {
-        System.out.println("Захваченные фигуры:");
-        System.out.print("Белые: " + ANSI_WHITE);
+        System.out.println("Съеденные фигуры:");
+        System.out.print("Белые съели: " + ANSI_YELLOW);
         for (ChessPiece p : captured) {
-            if (p.getTeam() == ChessTeam.WHITE) {
+            if (p.getTeam() == ChessTeam.BLACK) {
                 System.out.print(p + " ");
             }
         }
         System.out.println(ANSI_RESET);
 
-        System.out.print("Черные: " + ANSI_YELLOW);
+        System.out.print("Черные съели: " + ANSI_WHITE);
         for (ChessPiece p : captured) {
-            if (p.getTeam() == ChessTeam.BLACK) {
+            if (p.getTeam() == ChessTeam.WHITE) {
                 System.out.print(p + " ");
             }
         }

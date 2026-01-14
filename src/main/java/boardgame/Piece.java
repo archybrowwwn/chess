@@ -14,11 +14,21 @@ public abstract class Piece {
         this.node = null;
     }
 
-    public Board getBoard() { return board; }
-    public Team getTeam() { return team; }
+    public Board getBoard() {
+        return board;
+    }
 
-    public Node getNode() { return node; }
-    public void setNode(Node node) { this.node = node; }
+    public Team getTeam() {
+        return team;
+    }
+
+    public Node getNode() {
+        return node;
+    }
+
+    public void setNode(Node node) {
+        this.node = node;
+    }
 
     public abstract List<Node> possibleMoves();
 

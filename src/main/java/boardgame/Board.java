@@ -12,7 +12,7 @@ public class Board {
 
     public Board(int rows, int columns) {
         if (rows < 1 || columns < 1) {
-            throw new BoardException("Ошибка создания доски: должно быть как минимум 1 строка и 1 столбец");
+            throw new BoardException("Ошибка создания доски");
         }
         this.rows = rows;
         this.columns = columns;
@@ -31,23 +31,16 @@ public class Board {
             for (int c = 0; c < columns; c++) {
                 Node node = getNode(r, c);
 
-                linkIfExists(node, Direction.NORTH, r - 1, c);
-                linkIfExists(node, Direction.SOUTH, r + 1, c);
-                linkIfExists(node, Direction.WEST, r, c - 1);
-                linkIfExists(node, Direction.EAST, r, c + 1);
+                for (Direction dir : Direction.values()) {
+                    int neighborRow = r + dir.getRowOffset();
+                    int neighborCol = c + dir.getColumnOffset();
 
-                linkIfExists(node, Direction.NORTH_WEST, r - 1, c - 1);
-                linkIfExists(node, Direction.NORTH_EAST, r - 1, c + 1);
-                linkIfExists(node, Direction.SOUTH_WEST, r + 1, c - 1);
-                linkIfExists(node, Direction.SOUTH_EAST, r + 1, c + 1);
+                    if (positionExists(neighborRow, neighborCol)) {
+                        Node neighbor = getNode(neighborRow, neighborCol);
+                        node.setNeighbor(dir, neighbor);
+                    }
+                }
             }
-        }
-    }
-
-    private void linkIfExists(Node source, Direction dir, int r, int c) {
-        if (positionExists(r, c)) {
-            Node target = getNode(r, c);
-            source.setNeighbor(dir, target);
         }
     }
 
@@ -55,12 +48,10 @@ public class Board {
         return row + "," + column;
     }
 
-    // Получение узла по координатам
     public Node getNode(int row, int column) {
         return nodes.get(makeId(row, column));
     }
 
-    // Получение узла по ID
     public Node getNode(String id) {
         return nodes.get(id);
     }
@@ -71,7 +62,7 @@ public class Board {
             throw new BoardException("Узел не найден: " + nodeId);
         }
         if (!node.isEmpty()) {
-            throw new BoardException("На позиции " + nodeId + " уже есть фигура");
+            throw new BoardException("Позиция занята: " + nodeId);
         }
         node.setPiece(piece);
         piece.setNode(node);

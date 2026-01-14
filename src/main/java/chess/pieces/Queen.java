@@ -23,13 +23,11 @@ public class Queen extends ChessPiece {
     public List<Node> possibleMoves() {
         List<Node> moves = new ArrayList<>();
 
-        // Прямые линии
         addMovesInDirection(moves, Direction.NORTH);
         addMovesInDirection(moves, Direction.SOUTH);
         addMovesInDirection(moves, Direction.WEST);
         addMovesInDirection(moves, Direction.EAST);
 
-        // Диагонали
         addMovesInDirection(moves, Direction.NORTH_WEST);
         addMovesInDirection(moves, Direction.NORTH_EAST);
         addMovesInDirection(moves, Direction.SOUTH_WEST);
